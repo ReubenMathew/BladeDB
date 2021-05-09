@@ -1,21 +1,13 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 
-	"github.com/ReubenMathew/BladeDB/model"
-	"github.com/ReubenMathew/BladeDB/raft"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 )
 
 func main() {
-	fmt.Println("Hello World")
-	r := raft.NewRaft(2)
-	fmt.Println(r.GetID())
-	s := model.NewServer(1)
-	fmt.Println(s)
 	// echo instance
 	e := echo.New()
 
@@ -25,6 +17,7 @@ func main() {
 	/* Routing */
 	e.GET("/", home)
 	e.GET("/get", get)
+	e.POST("/put", post)
 
 	e.Logger.Fatal(e.Start(":1323"))
 }
@@ -47,4 +40,18 @@ func get(c echo.Context) error {
 		Value: "This is a value that maps to the key",
 	}
 	return c.JSON(http.StatusOK, kvp)
+}
+
+func post(c echo.Context) error {
+	key := c.FormValue("key")
+	value := c.FormValue("value")
+
+	insert(key, value) //placeholder
+
+	returnString := "key: " + key + " value: " + value
+	return c.String(http.StatusAccepted, returnString)
+}
+
+func insert(key string, value string) {
+
 }
