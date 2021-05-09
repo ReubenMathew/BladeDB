@@ -8,6 +8,7 @@ import (
 )
 
 func main() {
+
 	// echo instance
 	e := echo.New()
 
@@ -36,8 +37,7 @@ func get(c echo.Context) error {
 
 	key := c.QueryParam("key")
 	kvp := &KVP{
-		Key:   key,
-		Value: "This is a value that maps to the key",
+		Key: key,
 	}
 	return c.JSON(http.StatusOK, kvp)
 }
@@ -53,5 +53,5 @@ func post(c echo.Context) error {
 }
 
 func insert(key string, value string) {
-
+	// replace with cluster insert
 }
