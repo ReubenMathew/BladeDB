@@ -3,24 +3,31 @@ package main
 import (
 	"net/http"
 
+	"github.com/ReubenMathew/BladeDB/store"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 )
 
+var db *store.DB
+
 func main() {
 
+	db = store.NewDB()
 	// echo instance
 	e := echo.New()
 
 	e.Use(middleware.Logger())
-	// e.Use(middleware.Recover())
 
 	/* Routing */
 	e.GET("/", home)
 	e.GET("/get", get)
+	e.GET("/size", size)
 	e.POST("/put", post)
+	e.GET("/put", post)
 
-	e.Logger.Fatal(e.Start(":1323"))
+	e.Logger.Fatal(
+		e.Start(":1323"),
+	)
 }
 
 func home(c echo.Context) error {
@@ -33,11 +40,26 @@ type KVP struct {
 	Value string `json:"value" xml:"value"`
 }
 
+type SizeJSON struct {
+	NodeID int `json:"id" xml:"id"`
+	Size   int `json:"size" xml:"size"`
+}
+
+func size(c echo.Context) error {
+	size := &SizeJSON{
+		NodeID: 0,
+		Size:   db.Size(),
+	} // replace with getSize of raftServerKV_Store
+	return c.JSON(http.StatusOK, size)
+}
+
 func get(c echo.Context) error {
 
 	key := c.QueryParam("key")
+
 	kvp := &KVP{
-		Key: key,
+		Key:   key,
+		Value: db.Get(key),
 	}
 	return c.JSON(http.StatusOK, kvp)
 }
@@ -53,5 +75,6 @@ func post(c echo.Context) error {
 }
 
 func insert(key string, value string) {
-	// replace with cluster insert
+	// replace with raft server insert
+	db.Put(key, value)
 }
