@@ -18,6 +18,7 @@ type Server interface {
 type server struct {
 	mutex              sync.RWMutex
 	id                 int
+	peerIds            []int
 	follower           bool
 	leader             bool
 	candidate          bool

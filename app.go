@@ -13,14 +13,16 @@ func main() {
 	e := echo.New()
 
 	e.Use(middleware.Logger())
-	// e.Use(middleware.Recover())
 
 	/* Routing */
 	e.GET("/", home)
 	e.GET("/get", get)
+	e.GET("/size", size)
 	e.POST("/put", post)
 
-	e.Logger.Fatal(e.Start(":1323"))
+	e.Logger.Fatal(
+		e.Start(":1323"),
+	)
 }
 
 func home(c echo.Context) error {
@@ -31,6 +33,19 @@ func home(c echo.Context) error {
 type KVP struct {
 	Key   string `json:"key" xml:"key"`
 	Value string `json:"value" xml:"value"`
+}
+
+type SizeJSON struct {
+	NodeID int `json:"id" xml:"id"`
+	Size   int `json:"size" xml:"size"`
+}
+
+func size(c echo.Context) error {
+	size := &SizeJSON{
+		NodeID: 0,
+		Size:   0,
+	} // replace with getSize of raftServerKV_Store
+	return c.JSON(http.StatusOK, size)
 }
 
 func get(c echo.Context) error {
@@ -53,5 +68,5 @@ func post(c echo.Context) error {
 }
 
 func insert(key string, value string) {
-	// replace with cluster insert
+	// replace with raft server insert
 }
