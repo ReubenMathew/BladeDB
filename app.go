@@ -3,12 +3,16 @@ package main
 import (
 	"net/http"
 
+	"github.com/ReubenMathew/BladeDB/store"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 )
 
+var db *store.DB
+
 func main() {
 
+	db = store.NewDB()
 	// echo instance
 	e := echo.New()
 
@@ -19,6 +23,7 @@ func main() {
 	e.GET("/get", get)
 	e.GET("/size", size)
 	e.POST("/put", post)
+	e.GET("/put", post)
 
 	e.Logger.Fatal(
 		e.Start(":1323"),
@@ -43,7 +48,7 @@ type SizeJSON struct {
 func size(c echo.Context) error {
 	size := &SizeJSON{
 		NodeID: 0,
-		Size:   0,
+		Size:   db.Size(),
 	} // replace with getSize of raftServerKV_Store
 	return c.JSON(http.StatusOK, size)
 }
@@ -51,8 +56,10 @@ func size(c echo.Context) error {
 func get(c echo.Context) error {
 
 	key := c.QueryParam("key")
+
 	kvp := &KVP{
-		Key: key,
+		Key:   key,
+		Value: db.Get(key),
 	}
 	return c.JSON(http.StatusOK, kvp)
 }
@@ -69,4 +76,5 @@ func post(c echo.Context) error {
 
 func insert(key string, value string) {
 	// replace with raft server insert
+	db.Put(key, value)
 }
