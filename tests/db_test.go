@@ -8,7 +8,7 @@ import (
 
 var db *store.DB
 
-func testSetup() {
+func testSetup_DB() {
 	if db == nil {
 		db = store.NewDB()
 	}
@@ -16,7 +16,7 @@ func testSetup() {
 }
 
 func TestDB_write(t *testing.T) {
-	testSetup()
+	testSetup_DB()
 	db.Put("TestKey", "TestValue")
 
 	gotSize := db.Size()
@@ -26,7 +26,7 @@ func TestDB_write(t *testing.T) {
 }
 
 func TestDB_clear(t *testing.T) {
-	testSetup()
+	testSetup_DB()
 	db.Put("TestKey1", "TestValue1")
 	db.Put("TestKey2", "TestValue2")
 	db.Clear()
@@ -37,7 +37,7 @@ func TestDB_clear(t *testing.T) {
 }
 
 func TestDB_read(t *testing.T) {
-	testSetup()
+	testSetup_DB()
 	db.Put("TestKey1", "TestValue1")
 	db.Put("TestKey2", "TestValue2")
 	gotSize := db.Size()
