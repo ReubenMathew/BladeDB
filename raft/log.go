@@ -24,12 +24,17 @@ type entry struct {
 
 func NewLog() *RaftLog {
 	return &RaftLog{
+		mutex:     new(sync.RWMutex),
 		entries:   []entry{},
 		commitIdx: 0,
 	}
 }
 
-func (r RaftLog) Append(command string, term int) {
+func (e entry) GetCommand() string {
+	return e.command
+}
+
+func (r RaftLog) Append(term int, command string) {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
 	e := entry{
@@ -45,6 +50,10 @@ func (r RaftLog) GetEntries() []entry {
 
 func (r RaftLog) GetEntry(idx int) entry {
 	return r.entries[idx]
+}
+
+func (r RaftLog) ClearEntries() {
+	r.entries = nil
 }
 
 func PrintLog(l Log) {
